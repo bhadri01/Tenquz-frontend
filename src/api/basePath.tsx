@@ -1,0 +1,1 @@
+export const BasePath = "https://backquiz.selfmade.one"

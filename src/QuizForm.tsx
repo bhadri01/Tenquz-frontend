@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import axios from 'axios';
 import { Quiz } from './types';
+import { BasePath } from './api/basePath';
 
 interface QuizFormProps {
   setQuiz: React.Dispatch<React.SetStateAction<Quiz | null>>;
@@ -18,7 +19,7 @@ const QuizForm: React.FC<QuizFormProps> = ({ setQuiz }) => {
 
   const onSubmit: SubmitHandler<QuizRequest> = (data) => {
     setLoading(true);
-    axios.post('http://localhost:8000/generate_quiz', data)
+    axios.post(`${BasePath}/generate_quiz`, data)
       .then(response => {
         setQuiz(response.data);
         setLoading(false);
