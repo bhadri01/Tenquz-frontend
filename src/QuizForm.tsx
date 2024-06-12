@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import axios from 'axios';
 import { Quiz } from './types';
@@ -14,14 +14,18 @@ interface QuizRequest {
 
 const QuizForm: React.FC<QuizFormProps> = ({ setQuiz }) => {
   const { register, handleSubmit } = useForm<QuizRequest>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<QuizRequest> = (data) => {
+    setLoading(true);
     axios.post('http://localhost:8000/generate_quiz', data)
       .then(response => {
         setQuiz(response.data);
+        setLoading(false);
       })
       .catch(error => {
         console.error('There was an error generating the quiz!', error);
+        setLoading(false);
       });
   };
 
@@ -47,7 +51,14 @@ const QuizForm: React.FC<QuizFormProps> = ({ setQuiz }) => {
           <option value="hard">Hard</option>
         </select>
       </div>
-      <button type="submit" className="w-full bg-blue-500 text-white py-2 px-4 rounded mt-4">Generate Quiz</button>
+      <button type="submit" className={`w-full bg-blue-500 text-white py-2 px-4 rounded mt-4 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={loading}>
+        {loading ? 'Generating...' : 'Generate Quiz'}
+      </button>
+      {loading && (
+        <div className="flex justify-center mt-4">
+          <div className="w-6 h-6 border-4 border-t-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
+        </div>
+      )}
     </form>
   );
 };
